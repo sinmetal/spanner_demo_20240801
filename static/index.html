@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Spanner Full Text Search Demo</title>
+</head>
+<script>
+    function search() {
+        // textareaの値を取得
+        const textareaValue = document.getElementById("search").value;
+
+        // POSTリクエストを送信
+        fetch('/api/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: textareaValue })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                data.results.forEach(item => {
+                    const newLine = document.createElement('p');
+                    newLine.textContent = item.createdAt + " : " + item.message;
+                    resultDiv.appendChild(newLine);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
+<body>
+<h1>Spanner Full Text Search Demo</h1>
+<section>
+    <label for="post">データ投入:</label>
+    <textarea id="post" name="post" rows="5" cols="100">
+</textarea>
+    <button onclick="postText('post')">投入</button>
+</section>
+<section>
+    <label for="search">データ検索:</label>
+    <textarea id="search" name="search" rows="1" cols="100">
+</textarea>
+    <button onclick="search()">検索</button>
+</section>
+<section>
+    <div id="result"></div>
+</section>
+
+</body>
+</html>
