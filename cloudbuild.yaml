@@ -1,0 +1,30 @@
+steps:
+  - name: 'golang:1.22'
+    entrypoint: 'go'
+    args: [ 'build', '-o', 'app', 'github.com/spanner_demo_20240801/cmd' ]
+    env: [ 'CGO_ENABLED=0' ]
+  - name: 'gcr.io/kaniko-project/executor:v1.22.0'
+    args:
+      - --destination=us-central1-docker.pkg.dev/$PROJECT_ID/demo/main:$BRANCH_NAME
+      - --destination=us-central1-docker.pkg.dev/$PROJECT_ID/demo/main:$COMMIT_SHA
+      - --cache=true
+      - --cache-ttl=6h
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'gcloud'
+    args:
+      - beta
+      - run
+      - deploy
+      - appserver
+      - --region=us-central1
+      - --platform=managed
+      - --cpu-throttling
+      - --service-account=run-default@$PROJECT_ID.iam.gserviceaccount.com
+      - --max-instances=3
+      - --cpu=1
+      - --memory=256M
+      - --concurrency=16
+      - --allow-unauthenticated
+      - --timeout=30s
+      - --image=us-central1-docker.pkg.dev/$PROJECT_ID/demo/main:$BRANCH_NAME
+      - --tag=$BRANCH_NAME
