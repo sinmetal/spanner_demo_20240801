@@ -10,6 +10,7 @@ steps:
       - --destination=us-central1-docker.pkg.dev/$PROJECT_ID/demo/main:$COMMIT_SHA
       - --cache=true
       - --cache-ttl=6h
+      - --dockerfile=Dockerfile
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'gcloud'
     args:

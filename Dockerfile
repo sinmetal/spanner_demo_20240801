@@ -1,3 +1,4 @@
 FROM gcr.io/distroless/static-debian11
-COPY ./app /app
+COPY ./cmd/app /app
+COPY ./static/ /static
 ENTRYPOINT ["/app"]
