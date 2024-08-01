@@ -6,10 +6,9 @@
 </head>
 <script>
     function search() {
-        // textareaの値を取得
-        const textareaValue = document.getElementById("search").value;
+        const searchDiv = document.getElementById("search");
+        const textareaValue = searchDiv.value;
 
-        // POSTリクエストを送信
         fetch('/api/search', {
             method: 'POST',
             headers: {
@@ -20,11 +19,68 @@
             .then(response => response.json())
             .then(data => {
                 const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';
+                const searchMessage = document.createElement('p');
+                searchMessage.textContent = searchDiv.value;
+                resultDiv.appendChild(searchMessage);
+
+                const newLine = document.createElement('p');
+                newLine.textContent = "Search Done" + " : " + new Date();
+                resultDiv.appendChild(newLine);
+
+                if (data.results === null) {
+                    const newLine = document.createElement('p');
+                    newLine.textContent = "Empty search results";
+                    resultDiv.appendChild(newLine);
+                    return
+                }
+
                 data.results.forEach(item => {
                     const newLine = document.createElement('p');
                     newLine.textContent = item.createdAt + " : " + item.message;
                     resultDiv.appendChild(newLine);
                 });
+                searchDiv.value = "";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function postMessage() {
+        const postMessageDiv = document.getElementById("postMessage");
+        const textareaValue = postMessageDiv.value;
+
+        if (textareaValue === "") {
+            return;
+        }
+
+        fetch('/api/postMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: textareaValue })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';
+                const doneMessage = document.createElement('p');
+                doneMessage.textContent = "Done Post Message" + " : " + new Date();
+                resultDiv.appendChild(doneMessage);
+
+                if (data.result === null) {
+                    const newLine = document.createElement('p');
+                    newLine.textContent = "Failed Post Data";
+                    resultDiv.appendChild(newLine);
+                    return;
+                }
+
+                const resultMessage = document.createElement('p');
+                resultMessage.textContent = data.result.message;
+                resultDiv.appendChild(resultMessage);
+                postMessageDiv.value = "";
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -34,15 +90,13 @@
 <body>
 <h1>Spanner Full Text Search Demo</h1>
 <section>
-    <label for="post">データ投入:</label>
-    <textarea id="post" name="post" rows="5" cols="100">
-</textarea>
-    <button onclick="postText('post')">投入</button>
+    <label for="postMessage">データ投入:</label>
+    <textarea id="postMessage" name="post" rows="5" cols="100"></textarea>
+    <button onclick="postMessage()">投入</button>
 </section>
 <section>
     <label for="search">データ検索:</label>
-    <textarea id="search" name="search" rows="1" cols="100">
-</textarea>
+    <textarea id="search" name="search" rows="1" cols="100"></textarea>
     <button onclick="search()">検索</button>
 </section>
 <section>
