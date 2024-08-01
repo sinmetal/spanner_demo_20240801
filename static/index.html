@@ -6,10 +6,8 @@
 </head>
 <script>
     function search() {
-        // textareaの値を取得
         const textareaValue = document.getElementById("search").value;
 
-        // POSTリクエストを送信
         fetch('/api/search', {
             method: 'POST',
             headers: {
@@ -20,6 +18,18 @@
             .then(response => response.json())
             .then(data => {
                 const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';
+                const newLine = document.createElement('p');
+                newLine.textContent = "Search Done" + " : " + new Date();
+                resultDiv.appendChild(newLine);
+
+                if (data.results === null) {
+                    const newLine = document.createElement('p');
+                    newLine.textContent = "Empty search results";
+                    resultDiv.appendChild(newLine);
+                    return
+                }
+
                 data.results.forEach(item => {
                     const newLine = document.createElement('p');
                     newLine.textContent = item.createdAt + " : " + item.message;
