@@ -64,7 +64,7 @@ func StaticContentsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", ct)
-	w.Header().Set("Cache-Control", "max-age=900")
+	w.Header().Set("Cache-Control", "max-age=180")
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(f)))
 	w.WriteHeader(http.StatusOK)
 	w.Write(f)
