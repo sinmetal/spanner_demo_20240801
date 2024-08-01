@@ -36,10 +36,11 @@ func Ignition(ctx context.Context) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	searchHandler := SearchHandler{
+	messageHandler := MessageHandler{
 		s: s,
 	}
-	http.HandleFunc("/api/search", searchHandler.Handler)
+	http.HandleFunc("/api/search", messageHandler.SearchHandler)
+	http.HandleFunc("/api/postMessage", messageHandler.PostMessageHandler)
 	http.HandleFunc("/", StaticContentsHandler)
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), http.DefaultServeMux); err != nil {

@@ -34,10 +34,10 @@ func (s *Service) CreateSampleMessageID(message string) string {
 	return hex.EncodeToString(v[:])
 }
 
-func (s *Service) Insert(ctx context.Context, value *SampleMessage) error {
+func (s *Service) Insert(ctx context.Context, value *SampleMessage) (*SampleMessage, error) {
 	value.SampleMessageID = s.CreateSampleMessageID(value.Message)
 	value.CreatedAt = spanner.CommitTimestamp
-	_, err := s.spa.ReadWriteTransaction(ctx, func(ctx context.Context, tx *spanner.ReadWriteTransaction) error {
+	commitTimestamp, err := s.spa.ReadWriteTransaction(ctx, func(ctx context.Context, tx *spanner.ReadWriteTransaction) error {
 		m, err := spanner.InsertOrUpdateStruct(SampleMessagesTable, value)
 		if err != nil {
 			return err
@@ -48,9 +48,10 @@ func (s *Service) Insert(ctx context.Context, value *SampleMessage) error {
 		return nil
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	value.CreatedAt = commitTimestamp
+	return value, nil
 }
 
 func (s *Service) SearchMessage(ctx context.Context, text string) ([]*SampleMessage, error) {
