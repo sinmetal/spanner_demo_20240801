@@ -1,7 +1,8 @@
 steps:
   - name: 'golang:1.22'
     entrypoint: 'go'
-    args: [ 'build', '-o', 'app', 'github.com/spanner_demo_20240801/cmd' ]
+    dir: 'cmd'
+    args: [ 'build', '-o', 'app', '.' ]
     env: [ 'CGO_ENABLED=0' ]
   - name: 'gcr.io/kaniko-project/executor:v1.22.0'
     args:
