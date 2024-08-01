@@ -23,7 +23,6 @@ func Ignition(ctx context.Context) {
 
 	dbName := fmt.Sprintf("projects/%s/instances/%s/databases/%s", "gcpug-public-spanner", "merpay-sponsored-instance", "sinmetal")
 	dspc := spanner.DefaultSessionPoolConfig
-	dspc.MinOpened = 3
 	spa, err := spanner.NewClientWithConfig(ctx, dbName,
 		spanner.ClientConfig{
 			SessionPoolConfig: dspc,
