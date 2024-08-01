@@ -29,4 +29,5 @@ steps:
       - --image=us-central1-docker.pkg.dev/$PROJECT_ID/demo/main:$BRANCH_NAME
       - --tag=$BRANCH_NAME
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: GCS_ONLY
+  default_logs_bucket_behavior: REGIONAL_USER_OWNED_BUCKET
