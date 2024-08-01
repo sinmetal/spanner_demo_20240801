@@ -24,6 +24,7 @@ func (h *MessageHandler) PostMessageHandler(w http.ResponseWriter, r *http.Reque
 	var body PostMessageReq
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Printf("failed request body json decode. %s\n", err)
 		return
 	}
 
@@ -32,6 +33,7 @@ func (h *MessageHandler) PostMessageHandler(w http.ResponseWriter, r *http.Reque
 	})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Printf("failed SampleMessage.Insert. %s\n", err)
 		return
 	}
 
@@ -59,12 +61,15 @@ func (h *MessageHandler) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	var body SearchReq
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Printf("failed request body json decode. %s\n", err)
 		return
 	}
 
 	msgs, err := h.s.SearchMessage(ctx, body.Text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Printf("failed SampleMessage.SearchMessage. %s\n", err)
+		return
 		return
 	}
 
