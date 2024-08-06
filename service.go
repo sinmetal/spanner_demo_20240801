@@ -54,17 +54,26 @@ func (s *Service) Insert(ctx context.Context, value *SampleMessage) (*SampleMess
 	return value, nil
 }
 
-func (s *Service) SearchMessage(ctx context.Context, text string) ([]*SampleMessage, error) {
-	const sql = `SELECT SampleMessageID, Message, CreatedAt
+type SearchMessageResult struct {
+	SampleMessageID string    `json:"sampleMessageID"`
+	Message         string    `json:"message"`
+	Score           float64   `json:"score"`
+	CreatedAt       time.Time `json:"createdAt"`
+}
+
+func (s *Service) SearchMessage(ctx context.Context, text string) ([]*SearchMessageResult, error) {
+	const sql = `SELECT SampleMessageID, Message, SCORE(SampleMessages_Message_Tokens, @text) AS score, CreatedAt
  FROM SampleMessages
  WHERE SEARCH(SampleMessages_Message_Tokens, @text)
+ ORDER BY SCORE(SampleMessages_Message_Tokens, @text)
+ LIMIT 50
 `
 	sts := spanner.NewStatement(sql)
 	sts.Params = map[string]interface{}{
 		"text": text,
 	}
 
-	var rets []*SampleMessage
+	var rets []*SearchMessageResult
 	iter := s.spa.Single().Query(ctx, sts)
 	for {
 		row, err := iter.Next()
@@ -74,7 +83,7 @@ func (s *Service) SearchMessage(ctx context.Context, text string) ([]*SampleMess
 		if err != nil {
 			return nil, err
 		}
-		var v SampleMessage
+		var v SearchMessageResult
 		if err := row.ToStruct(&v); err != nil {
 			return nil, err
 		}

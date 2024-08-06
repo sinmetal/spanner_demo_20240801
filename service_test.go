@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"cloud.google.com/go/spanner"
+	"github.com/k0kubun/pp/v3"
 )
 
 func TestService_Insert(t *testing.T) {
@@ -31,10 +32,38 @@ func TestService_Insert(t *testing.T) {
 		log.Fatalln(err)
 	}
 
-	err = s.Insert(ctx, &SampleMessage{
+	_, err = s.Insert(ctx, &SampleMessage{
 		Message: msg,
 	})
 	if err != nil {
 		log.Fatalln(err)
+	}
+}
+
+func TestService_SearchMessage(t *testing.T) {
+	ctx := context.Background()
+
+	dbName := fmt.Sprintf("projects/%s/instances/%s/databases/%s", "gcpug-public-spanner", "merpay-sponsored-instance", "sinmetal")
+	dspc := spanner.DefaultSessionPoolConfig
+	dspc.MinOpened = 3
+	spa, err := spanner.NewClientWithConfig(ctx, dbName,
+		spanner.ClientConfig{
+			SessionPoolConfig: dspc,
+		})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	s, err := NewService(ctx, spa)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	got, err := s.SearchMessage(ctx, "横浜")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, v := range got {
+		pp.Println(v)
 	}
 }
