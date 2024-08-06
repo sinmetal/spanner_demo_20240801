@@ -36,9 +36,11 @@
                 }
 
                 data.results.forEach(item => {
-                    const newLine = document.createElement('p');
-                    newLine.textContent = item.createdAt + " : " + item.message;
+                    const newLine = document.createElement('pre');
+                    newLine.textContent = item.createdAt + " Score(" + item.score + ")\n" + item.message;
                     resultDiv.appendChild(newLine);
+                    const hr = document.createElement('hr');
+                    resultDiv.appendChild(hr);
                 });
                 searchDiv.value = "";
             })

@@ -52,7 +52,7 @@ type SearchReq struct {
 }
 
 type SearchResp struct {
-	Results []*SampleMessage `json:"results"`
+	Results []*SearchMessageResult `json:"results"`
 }
 
 func (h *MessageHandler) SearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +69,6 @@ func (h *MessageHandler) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Printf("failed SampleMessage.SearchMessage. %s\n", err)
-		return
 		return
 	}
 

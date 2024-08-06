@@ -17,7 +17,7 @@ steps:
       - beta
       - run
       - deploy
-      - appserver
+      - spanner-demo
       - --region=us-central1
       - --platform=managed
       - --cpu-throttling
