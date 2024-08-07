@@ -64,7 +64,7 @@ type SearchMessageResult struct {
 func (s *Service) SearchMessage(ctx context.Context, text string) ([]*SearchMessageResult, error) {
 	const sql = `SELECT SampleMessageID, Message, SCORE(SampleMessages_Message_Tokens, @text) AS score, CreatedAt
  FROM SampleMessages
- WHERE SEARCH(SampleMessages_Message_Tokens, @text)
+ WHERE SEARCH(SampleMessages_Message_Tokens, @text, enhance_query=>true, language_tag=>'ja')
  ORDER BY SCORE(SampleMessages_Message_Tokens, @text)
  LIMIT 50
 `
