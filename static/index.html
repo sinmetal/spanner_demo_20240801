@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Spanner Full Text Search Demo</title>
+    <style>
+        .container {
+        display: flex;
+        flex-direction: column; /* 縦方向に配置 */
+        }
+    </style>
 </head>
 <script>
     function search() {
@@ -20,9 +26,6 @@
             .then(data => {
                 const resultDiv = document.getElementById('result');
                 resultDiv.innerHTML = '';
-                const searchMessage = document.createElement('p');
-                searchMessage.textContent = searchDiv.value;
-                resultDiv.appendChild(searchMessage);
 
                 const newLine = document.createElement('p');
                 newLine.textContent = "Search Done" + " : " + new Date();
@@ -42,7 +45,59 @@
                     const hr = document.createElement('hr');
                     resultDiv.appendChild(hr);
                 });
-                searchDiv.value = "";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function searchComposite() {
+        const searchTitleDiv = document.getElementById("searchTitle");
+        const title = searchTitleDiv.value;
+        const searchMessageDiv = document.getElementById("searchMessage");
+        const message = searchMessageDiv.value;
+        const searchTagDiv = document.getElementById("searchTag");
+        const tag = searchTagDiv.value;
+
+        fetch('/api/searchComposite', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: title,
+                message: message,
+                tag: tag,
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';
+
+                const newLine = document.createElement('p');
+                newLine.textContent = "Search Done" + " : " + new Date();
+                resultDiv.appendChild(newLine);
+
+                if (data.results === null) {
+                    const newLine = document.createElement('p');
+                    newLine.textContent = "Empty search results";
+                    resultDiv.appendChild(newLine);
+                    return
+                }
+
+                data.results.forEach(item => {
+                    let newLine = document.createElement('pre');
+                    newLine.textContent = item.createdAt
+                    if (Array.isArray(item.tags)) {
+                        newLine.textContent += " Tags(" + item.tags.join(",") + ")";
+                    }
+                    newLine.textContent += "\n" + item.title
+                    newLine.textContent += "\n" + item.message
+                    resultDiv.appendChild(newLine);
+                    const hr = document.createElement('hr');
+                    resultDiv.appendChild(hr);
+                });
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -51,9 +106,15 @@
 
     function postMessage() {
         const postMessageDiv = document.getElementById("postMessage");
-        const textareaValue = postMessageDiv.value;
+        const message = postMessageDiv.value;
 
-        if (textareaValue === "") {
+        const postTitleDiv = document.getElementById("postTitle");
+        const title = postTitleDiv.value;
+
+        const postTagsDiv = document.getElementById("postTags");
+        const tags = postTagsDiv.value.split('\n')
+
+        if (message === "") {
             return;
         }
 
@@ -62,7 +123,11 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ text: textareaValue })
+            body: JSON.stringify({
+                title: title,
+                message: message,
+                tags: tags,
+            })
         })
             .then(response => response.json())
             .then(data => {
@@ -82,7 +147,9 @@
                 const resultMessage = document.createElement('p');
                 resultMessage.textContent = data.result.message;
                 resultDiv.appendChild(resultMessage);
+                postTitleDiv.value = "";
                 postMessageDiv.value = "";
+                postTagsDiv.value = "";
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -91,15 +158,51 @@
 </script>
 <body>
 <h1>Spanner Full Text Search Demo</h1>
-<section>
-    <label for="postMessage">データ投入:</label>
-    <textarea id="postMessage" name="post" rows="5" cols="100"></textarea>
-    <button onclick="postMessage()">投入</button>
+<section class="container">
+    <h2>データ投入</h2>
+    <span style="display: inline-block;">
+        <label for="postTitle">タイトル:</label>
+        <textarea id="postTitle" name="post" rows="1" cols="100"></textarea>
+    </span>
+    <span style="display: inline-block;">
+        <label for="postMessage">メッセージ:</label>
+        <textarea id="postMessage" name="post" rows="5" cols="100"></textarea>
+    </span>
+    <span style="display: inline-block;">
+        <label for="postTags">タグ(改行区切り):</label>
+        <textarea id="postTags" name="post" rows="5" cols="32"></textarea>
+    </span>
+    <span>
+        <button onclick="postMessage()">投入</button>
+    </span>
 </section>
-<section>
-    <label for="search">データ検索:</label>
-    <textarea id="search" name="search" rows="1" cols="100"></textarea>
-    <button onclick="search()">検索</button>
+<section class="container">
+    <h2>メッセージ検索</h2>
+    <span>
+        <label for="search">メッセージ検索:</label>
+        <textarea id="search" name="search" rows="1" cols="100"></textarea>
+    </span>
+    <span>
+        <button onclick="search()">検索</button>
+    </span>
+</section>
+<section class="container">
+    <h2>複合検索</h2>
+    <span>
+        <label for="searchTitle">タイトル検索:</label>
+        <textarea id="searchTitle" name="searchTitle" rows="1" cols="100"></textarea>
+    </span>
+    <span>
+        <label for="searchMessage">メッセージ検索:</label>
+        <textarea id="searchMessage" name="searchMessage" rows="1" cols="100"></textarea>
+    </span>
+    <span>
+        <label for="searchTag">タグ検索:</label>
+        <textarea id="searchTag" name="searchTag" rows="1" cols="32"></textarea>
+    </span>
+    <span>
+        <button onclick="searchComposite()">検索</button>
+    </span>
 </section>
 <section>
     <div id="result"></div>

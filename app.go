@@ -38,6 +38,7 @@ func Ignition(ctx context.Context) {
 	messageHandler := MessageHandler{
 		s: s,
 	}
+	http.HandleFunc("/api/searchComposite", messageHandler.SearchCompositeHandler)
 	http.HandleFunc("/api/search", messageHandler.SearchHandler)
 	http.HandleFunc("/api/postMessage", messageHandler.PostMessageHandler)
 	http.HandleFunc("/", StaticContentsHandler)
