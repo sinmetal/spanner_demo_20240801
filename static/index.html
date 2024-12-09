@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html class="mdui-theme-dark" lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>Spanner Full Text Search Demo</title>
@@ -7,8 +7,13 @@
         .container {
         display: flex;
         flex-direction: column; /* 縦方向に配置 */
+        width: 720px;
         }
     </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"/>
+    <meta name="renderer" content="webkit"/>
+    <link rel="stylesheet" href="https://unpkg.com/mdui@2/mdui.css">
+    <script src="https://unpkg.com/mdui@2/mdui.global.js"></script>
 </head>
 <script>
     function search() {
@@ -160,53 +165,32 @@
 <h1>Spanner Full Text Search Demo</h1>
 <section class="container">
     <h2>データ投入</h2>
-    <span style="display: inline-block;">
-        <label for="postTitle">タイトル:</label>
-        <textarea id="postTitle" name="post" rows="1" cols="100"></textarea>
-    </span>
-    <span style="display: inline-block;">
-        <label for="postMessage">メッセージ:</label>
-        <textarea id="postMessage" name="post" rows="5" cols="100"></textarea>
-    </span>
-    <span style="display: inline-block;">
-        <label for="postTags">タグ(改行区切り):</label>
-        <textarea id="postTags" name="post" rows="5" cols="32"></textarea>
-    </span>
-    <span>
-        <button onclick="postMessage()">投入</button>
-    </span>
+    <mdui-text-field label="タイトル" id="postTitle" name="post" rows="1" cols="100"></mdui-text-field>
+    <br/>
+    <mdui-text-field label="メッセージ" id="postMessage" name="post" rows="5" cols="100"></mdui-text-field>
+    <br/>
+    <mdui-text-field label="タグ(改行区切り)" id="postTags" name="post" rows="5" cols="32"></mdui-text-field>
+    <br/>
+    <mdui-button onclick="postMessage()">投入</mdui-button>
 </section>
 <section class="container">
     <h2>メッセージ検索</h2>
-    <span>
-        <label for="search">メッセージ検索:</label>
-        <textarea id="search" name="search" rows="1" cols="100"></textarea>
-    </span>
-    <span>
-        <button onclick="search()">検索</button>
-    </span>
+    <mdui-text-field label="検索文字列" id="search" name="search" rows="1" cols="100"></mdui-text-field>
+    <br />
+    <mdui-button onclick="search()">検索</mdui-button>
 </section>
 <section class="container">
     <h2>複合検索</h2>
-    <span>
-        <label for="searchTitle">タイトル検索:</label>
-        <textarea id="searchTitle" name="searchTitle" rows="1" cols="100"></textarea>
-    </span>
-    <span>
-        <label for="searchMessage">メッセージ検索:</label>
-        <textarea id="searchMessage" name="searchMessage" rows="1" cols="100"></textarea>
-    </span>
-    <span>
-        <label for="searchTag">タグ検索:</label>
-        <textarea id="searchTag" name="searchTag" rows="1" cols="32"></textarea>
-    </span>
-    <span>
-        <button onclick="searchComposite()">検索</button>
-    </span>
+    <mdui-text-field label="タイトル検索文字列" id="searchTitle" name="searchTitle" rows="1" cols="100"></mdui-text-field>
+    <br />
+    <mdui-text-field label="メッセージ検索文字列" id="searchMessage" name="searchMessage" rows="1" cols="100"></mdui-text-field>
+    <br />
+    <mdui-text-field label="タグ検索文字列" id="searchTag" name="searchTag" rows="1" cols="32"></mdui-text-field>
+    <br />
+    <mdui-button onclick="searchComposite()">複合検索</mdui-button>
 </section>
 <section>
     <div id="result"></div>
 </section>
-
 </body>
 </html>
